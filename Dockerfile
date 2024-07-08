@@ -11,7 +11,7 @@ WORKDIR /app
 COPY ./pom.xml ./src /app/
  
 # 使用Maven打包应用程序
-RUN mvn package
+RUN mvn -B package --file pom.xml
  
 # 设置工作目录为生成的jar文件
 WORKDIR /app/target
