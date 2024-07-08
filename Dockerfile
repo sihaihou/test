@@ -6,7 +6,7 @@ FROM openjdk:8u102-jdk
 LABEL maintainer="18307200213@163.com"
  
 # 暴露端口
-EXPOSE port=80
+EXPOSE 80
  
 # 添加jar包到容器中并更名为app.jar
 ADD ./target/myspringboot-0.0.1-SNAPSHOT.jar myspringboot-0.0.1-SNAPSHOT.jar
