@@ -8,7 +8,7 @@ LABEL maintainer="18307200213@163.com"
 # 暴露端口
 EXPOSE 80
 
-#
+#拷贝到工作目录
 COPY ./target/myspringboot-0.0.1-SNAPSHOT.jar myspringboot-0.0.1-SNAPSHOT.jar
  
 # 执行jar包
