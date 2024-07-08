@@ -9,7 +9,7 @@ LABEL maintainer="18307200213@163.com"
 EXPOSE 80
  
 # 添加jar包到容器中并更名为app.jar
-ADD ./target/myspringboot-0.0.1-SNAPSHOT.jar myspringboot-0.0.1-SNAPSHOT.jar
+ADD /home/runner/.m2/repository/com/reyco/myspringboot/myspringboot/0.0.1-SNAPSHOT/myspringboot-0.0.1-SNAPSHOT.jar myspringboot-0.0.1-SNAPSHOT.jar
  
 # 执行jar包
 ENTRYPOINT ["java", "-jar", "myspringboot-0.0.1-SNAPSHOT.jar"]
