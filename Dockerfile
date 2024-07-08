@@ -3,6 +3,8 @@ FROM openjdk:8u102-jdk
  
 # 指定维护者信息
 LABEL maintainer="18307200213@163.com"
+
+ENV JAVA_OPTS="-Dspring.profiles.active=github-actions"
  
 # 可以将工作目录设置为/app
 WORKDIR /app
@@ -11,7 +13,7 @@ WORKDIR /app
 COPY ./pom.xml ./src /app/
  
 # 使用Maven打包应用程序
-RUN mvn -B package --file pom.xml
+RUN mvn package $JAVA_OPTS
  
 # 设置工作目录为生成的jar文件
 WORKDIR /app/target
