@@ -16,12 +16,11 @@ RUN mvn -U clean install -Dmaven.test.skip=true
 
 # 设置工作目录为生成的jar文件
 WORKDIR /app/target
- 
+
+COPY myspringboot-0.0.1-SNAPSHOT.jar ./
+
 # 暴露端口
 EXPOSE 80
- 
-# 添加jar包到容器中并更名为app.jar
-ADD /app/target/myspringboot-0.0.1-SNAPSHOT.jar myspringboot-0.0.1-SNAPSHOT.jar
  
 # 执行jar包
 ENTRYPOINT ["java", "-jar", "myspringboot-0.0.1-SNAPSHOT.jar"]
