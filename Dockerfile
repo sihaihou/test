@@ -6,10 +6,10 @@ FROM openjdk:8u102-jdk
 LABEL maintainer="18307200213@163.com"
 
 # 暴露端口
-EXPOSE 80
+EXPOSE 8080
 
 #拷贝到工作目录
-COPY ./target/myspringboot-0.0.1-SNAPSHOT.jar myspringboot-0.0.1-SNAPSHOT.jar
+COPY ./target/testAction-0.0.1-SNAPSHOT.jar testAction-0.0.1-SNAPSHOT.jar
  
 # 执行jar包
-ENTRYPOINT ["java", "-jar", "myspringboot-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "testAction-0.0.1-SNAPSHOT.jar"]
