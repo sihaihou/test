@@ -1,14 +1,13 @@
 package com.reyco.core.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class TestController {
-
-	@GetMapping("test")
+		
+	@RequestMapping("test")
 	public String test() {
-		System.out.println("....test..........");
-		return "hello";
+		return "ok";
 	}
 }
