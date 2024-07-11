@@ -9,7 +9,7 @@ LABEL maintainer="18307200213@163.com"
 EXPOSE 8080
 
 #拷贝到工作目录
-COPY ./target/testAction-0.0.1-SNAPSHOT.jar testAction-0.0.1-SNAPSHOT.jar
+COPY ./target/testAction-0.0.1-SNAPSHOT.jar app.jar
  
 # 执行jar包
-ENTRYPOINT ["java", "-jar", "testAction-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
