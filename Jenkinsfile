@@ -1,13 +1,16 @@
 pipeline {
-    environment {
-        dockerImage = 'housihai/testActions:0.0.1'
-        dockerHubCredential = '54925b2c-d4e5-4a09-a7b2-a180656174b5'
-    }
     agent any
+    environment{
+        harbor_url = '192.168.83.33:80'
+        repo_name = 'housihai'
+        project_name = 'actions'
+        tag = 'latest'
+        port = '8080'
+    }
     stages {
-        stage('拉取代码: Checkout Code') {
+        stage('拉取代码：Checkout Code') {
             steps {
-               checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: '2893c330-9a16-498f-afd6-d66d37e5f806', url: 'https://github.com/sihaihou/testActions.git']])
+                checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'aaee6791-9a89-4c67-aef5-00bf0e36ff96', url: 'https://github.com/sihaihou/testActions.git']])
             }
         }
         stage('打包构建项目: Build Package Project') {
@@ -15,25 +18,20 @@ pipeline {
                 sh 'mvn clean package'
             }
         }
-        stage('制作Docker镜像：Build Docker Image') {
+        stage('Build and Push Image') {
             steps {
-                script {
-                    docker.build dockerImage
-                }
+                withCredentials([usernamePassword(credentialsId: '6ec4aacf-9598-4126-821e-970f77e3ad22', passwordVariable: 'password', usernameVariable: 'username')]) {
+                    sh 'docker build -t ${repo_name}/${project_name}:${tag} .'
+                    sh 'docker tag ${repo_name}/${project_name}:${tag} ${harbor_url}/${repo_name}/${project_name}:${tag}'
+                    sh 'docker login -u $username -p $password http://$harbor_url'
+                    sh 'docker push $harbor_url/${repo_name}/${project_name}:${tag}'
+                    sh 'docker rmi -f ${repo_name}/${project_name}:${tag} $harbor_url/${repo_name}/${project_name}:${tag}'
+                 }
             }
         }
-        stage('发布镜像: Deploy Image') {
-            steps {
-                script {
-                    docker.withRegistry( '', dockerHubCredential) {
-                        dockerImage.push()
-                    }
-                }
-            }
-        }
-        stage('清除本地镜像：Cleaning up') { 
-            steps { 
-                sh "docker rmi $dockerImage
+        stage('部署服务'){
+            steps{
+                sshPublisher(publishers: [sshPublisherDesc(configName: 'action-server', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: '/usr/local/shell/publish.sh ${harbor_url} ${repo_name} ${project_name} ${tag} ${port}', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '', remoteDirectorySDF: false, removePrefix: '', sourceFiles: '')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
             }
         }
     }
