@@ -1,0 +1,29 @@
+pipeline {
+    agent{
+        kubernetes{
+            inheritFrom 'jenkins-slave-java'
+        }
+    }
+    stages {
+        stage('拉取代码: Checkout Code') {
+            steps {
+                checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'aaee6791-9a89-4c67-aef5-00bf0e36ff96', url: 'https://github.com/sihaihou/testActions.git']])
+            }
+        }
+        stage('打包构建项目: Build Package Project') {
+            steps {
+                container("maven"){
+                    sh 'mvn clean package'
+                }
+            }
+        }
+         stage('构建镜像: Build and Push Image') {
+            steps {
+                container("docker"){
+                    sh 'docker build -t housihai/actions:latest .'
+                    sh "..."
+                }
+            }
+        }
+    }
+}
