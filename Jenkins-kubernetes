@@ -4,10 +4,19 @@ pipeline {
             inheritFrom 'jenkins-slave-java'
         }
     }
+    environment{
+        registryCredentialsId = '32902baf-c991-4765-b17b-f647c17e0831'
+        gitCredentialsId = 'aaee6791-9a89-4c67-aef5-00bf0e36ff96'
+        gitRepositoryUrl = 'https://github.com/sihaihou/testActions.git'
+        repoNmae = 'housihai'
+        projectName = 'actions'
+        branch = 'master'
+        tag = 'latest'
+    }
     stages {
         stage('拉取代码: Checkout Code') {
             steps {
-                checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'aaee6791-9a89-4c67-aef5-00bf0e36ff96', url: 'https://github.com/sihaihou/testActions.git']])
+                checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: "${gitCredentialsId}", url: "${gitRepositoryUrl}"]])
             }
         }
         stage('打包构建项目: Build Package Project') {
@@ -17,11 +26,15 @@ pipeline {
                 }
             }
         }
-         stage('构建镜像: Build and Push Image') {
+        stage('构建镜像: Build and Push Image') {
             steps {
                 container("docker"){
-                    sh 'docker build -t housihai/actions:latest .'
-                    sh "echo ..."
+                    withCredentials([usernamePassword(credentialsId: "${registryCredentialsId}", passwordVariable: 'password', usernameVariable: 'username')]) {
+                        sh "docker login -u $username -p $password"
+                        sh "docker build -t ${repoNmae}/${projectName}:${tag} ."
+                        sh "docker push ${repoNmae}/${projectName}:${tag}"
+                        sh "docker rmi -f ${repoNmae}/${projectName}:${tag}"
+                    }
                 }
             }
         }
